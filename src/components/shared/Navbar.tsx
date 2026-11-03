@@ -20,7 +20,7 @@ const Navbar = () => {
                     </Link>
                 </div>
                 <div>
-                    <Link href={`/upcoming-events`} className="font-bold cursor-pointer text-carecircle-primary">
+                    <Link href={`/upcoming-event`} className="font-bold cursor-pointer text-carecircle-primary">
                         <span className="flex items-center gap-1">
                             <Lightbulb></Lightbulb> Upcoming Events
                         </span>

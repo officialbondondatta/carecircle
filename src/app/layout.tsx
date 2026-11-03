@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { Josefin_Sans } from "next/font/google";
 import "./globals.css";
-import Navbar from "./components/shared/Navbar";
-import Footer from "./components/shared/Footer";
+import Navbar from "@/components/shared/Navbar";
+import Footer from "@/components/shared/Footer";
 import { Toaster } from "sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 
 const josefin_sans = Josefin_Sans({
@@ -22,10 +23,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${josefin_sans.className} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-carecircle-bg">
-        <Navbar></Navbar>
-        {children}
-        <Footer></Footer>
-        <Toaster position="top-right" richColors />
+        <TooltipProvider>
+          <Navbar></Navbar>
+          {children}
+          <Footer></Footer>
+          <Toaster position="top-right" richColors />
+        </TooltipProvider>
       </body>
     </html>
   );
