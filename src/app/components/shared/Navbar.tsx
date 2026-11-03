@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import AuthButtons from "@/components/auth/AuthButtons";
 import { Lightbulb } from "lucide-react";
 import Link from "next/link";
 
@@ -16,10 +16,7 @@ const Navbar = () => {
                         </span>
                     </Link >
                 </div>
-                <div className="flex gap-3">
-                    <Button className={`bg-carecircle-button hover:scale-105 hover:bg-carecircle-button cursor-pointer text-lg text-carecircle-text rounded-xs py-5 px-7 font-semibold`}>Login</Button>
-                    <Button className={`bg-carecircle-primary cursor-pointer hover:scale-105 hover:bg-carecircle-primary text-lg text-white rounded-xs py-5 px-7 font-semibold`}>Register</Button>
-                </div>
+                <AuthButtons></AuthButtons>
             </main>
         </nav>
     );
