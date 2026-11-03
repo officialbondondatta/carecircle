@@ -5,7 +5,6 @@ import {
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
-    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import UserDetails from "./UserDetails";
 import { IUserProps } from "@/lib/types";
@@ -15,8 +14,8 @@ const UserDropDown = ({ user }: { user: IUserProps }) => {
 
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger render={<UserDetails user={user}></UserDetails>} />
-            <DropdownMenuContent>
+            <UserDetails user={user} />
+            <DropdownMenuContent className={`min-w-50`}>
                 <DropdownMenuGroup>
                     <DropdownMenuLabel>
                         <p className="flex flex-col">

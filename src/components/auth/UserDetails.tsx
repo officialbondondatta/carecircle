@@ -5,6 +5,7 @@ import { Button } from '../ui/button';
 import { authClient } from '@/lib/auth-client';
 import { toast } from 'sonner';
 import { IUserProps } from '@/lib/types';
+import { DropdownMenuTrigger } from '../ui/dropdown-menu';
 
 interface UserDetailsProps extends React.ComponentProps<"div"> {
     user: IUserProps;
@@ -21,7 +22,7 @@ const UserDetails = ({ user, ...props }: UserDetailsProps) => {
     return (
         <div {...props} className="flex gap-2 items-center">
             <Tooltip>
-                <TooltipTrigger>
+                <TooltipTrigger render={<DropdownMenuTrigger />} aria-label="Open user menu" className="rounded-full outline-none focus-visible:ring-2 focus-visible:ring-carecircle-primary focus-visible:ring-offset-2">
                     <Avatar className={`size-11 shrink-0 cursor-pointer`} >
                         <AvatarImage className={`object-cover`} src={user?.image || "https://i.ibb.co.com/KcckVn5v/lucifer-style-avatar.png"} alt={user?.name || "User avatar"} />
                         <AvatarFallback>
