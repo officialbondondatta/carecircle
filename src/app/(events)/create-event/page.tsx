@@ -3,25 +3,19 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useSession } from "@/lib/auth-client";
 import type { EventType } from "@/lib/types";
-
+import { getToday } from "@/lib/utils";
 import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 
-const getToday = () => {
-    const parts = new Intl.DateTimeFormat("en-US", {
-        timeZone: "Asia/Dhaka",
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-    }).formatToParts(new Date())
-    const value = (type: string) => parts.find((part) => part.type === type)?.value
-    return `${value("year")}-${value("month")}-${value("day")}`
-}
 
-const CreateEventPage = () => {
+
+const CreateEventForm = () => {
     const router = useRouter()
+    const { data: session } = useSession()
+    const user = session?.user
     const [pending, setPending] = useState(false)
     const [error, setError] = useState("")
     const eventTypes: { value: EventType; label: string }[] = [
@@ -46,7 +40,9 @@ const CreateEventPage = () => {
                 return
             }
             const eventData = Object.fromEntries(data.entries())
-            console.log(eventData)
+            const userEmail = user?.email
+            const newEventData = { userEmail, ...eventData }
+            console.log(newEventData)
             form.reset()
             router.refresh()
         } catch {
@@ -114,4 +110,10 @@ const CreateEventPage = () => {
     );
 };
 
-export default CreateEventPage;
+export default function CreateEventPage() {
+    return (
+        <Suspense fallback={<p role="status" className="p-5 text-center">Loading event form…</p>}>
+            <CreateEventForm />
+        </Suspense>
+    )
+}
