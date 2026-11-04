@@ -1,8 +1,25 @@
+import EventCards from "@/components/events/EventCards";
+import { Suspense } from "react";
+
+
+
 const upcomingEventPage = () => {
+
+
     return (
-        <div>
-            <h2>Upcoming events page</h2>
-        </div>
+        <main className="lg:mb-15 mb-5">
+            <header className="text-center mt-10 lg:mb-15 mb-10">
+                <h2 className="text-3xl">Upcoming Events</h2>
+                <p>
+                    Discover what&apos;s happening in your community. Join local events, connect with neighbors, and be part of positive change.
+                </p>
+            </header>
+            <div className="max-w-7xl mx-auto">
+                <Suspense fallback={<p>Loading...</p>}>
+                    <EventCards></EventCards>
+                </Suspense>
+            </div>
+        </main>
     );
 };
 

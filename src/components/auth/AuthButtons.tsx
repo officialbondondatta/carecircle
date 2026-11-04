@@ -20,7 +20,6 @@ const AuthButtons = () => {
     }
 
     const user = session?.user
-    console.log(user)
 
     return (
         <div className="flex gap-3">

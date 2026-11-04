@@ -9,6 +9,7 @@ import { getToday } from "@/lib/utils";
 import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { Suspense, useState } from "react";
+import { toast } from "sonner";
 
 
 
@@ -27,7 +28,7 @@ const CreateEventForm = () => {
         { value: "Fundraising", label: "Fundraising" },
         { value: "Plantation", label: "Plantation" }
     ]
-    const handleCreateEvent = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleCreateEvent = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         setError("")
         setPending(true)
@@ -42,8 +43,28 @@ const CreateEventForm = () => {
             const eventData = Object.fromEntries(data.entries())
             const userEmail = user?.email
             const newEventData = { userEmail, ...eventData }
-            console.log(newEventData)
+
+            try {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/create-event`, {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(newEventData)
+                })
+                const result = await res.json()
+                if (!res.ok) {
+                    throw new Error(result.message || "Failed to create event");
+                }
+                console.log(result)
+                toast.success("Event Created Successfully")
+            } catch (error) {
+                toast.error(
+                    error instanceof Error ? error.message : "Something went wrong"
+                );
+            }
             form.reset()
+            router.push('/upcoming-event')
             router.refresh()
         } catch {
             setError("Unable to prepare the event. Please try again.")
