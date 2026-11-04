@@ -4,8 +4,7 @@ import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useSession } from "@/lib/auth-client";
-import type { EventType } from "@/lib/types";
-import { getToday } from "@/lib/utils";
+import { eventTypes, getToday } from "@/lib/utils";
 import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { Suspense, useState } from "react";
@@ -19,15 +18,7 @@ const CreateEventForm = () => {
     const user = session?.user
     const [pending, setPending] = useState(false)
     const [error, setError] = useState("")
-    const eventTypes: { value: EventType; label: string }[] = [
-        { value: "Sports", label: "Sports" },
-        { value: "Awareness", label: "Awareness" },
-        { value: "BloodDonation", label: "Blood Donation" },
-        { value: "Cleanup", label: "Cleanup" },
-        { value: "Donation", label: "Donation" },
-        { value: "Fundraising", label: "Fundraising" },
-        { value: "Plantation", label: "Plantation" }
-    ]
+
     const handleCreateEvent = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         setError("")

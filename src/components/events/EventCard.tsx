@@ -62,7 +62,7 @@ const EventCard = async ({ event, showButtons }: IEventCardProps) => {
                 </Link>
                 {
                     isUserActive && showButtons &&
-                    <EventCardButtons></EventCardButtons>
+                    <EventCardButtons event={event}></EventCardButtons>
                 }
             </CardFooter>
         </Card>
