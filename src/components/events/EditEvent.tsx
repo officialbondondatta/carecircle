@@ -9,7 +9,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import type { IEvent } from "@/lib/types"
 import { eventTypes, getToday } from "@/lib/utils"
 import { Edit } from "lucide-react"
+import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react"
+import { toast } from "sonner";
 
 
 
@@ -17,8 +19,9 @@ const EditEvent = ({ event }: { event: IEvent }) => {
     const { title, description, eventDate, eventType, location, image } = event
     const [error, setError] = useState("")
     const [minDate, setMinDate] = useState("")
+    const router = useRouter()
 
-    const handleEditEvent = (e: FormEvent<HTMLFormElement>) => {
+    const handleEditEvent = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         setError("")
         const formData = new FormData(e.currentTarget)
@@ -28,7 +31,26 @@ const EditEvent = ({ event }: { event: IEvent }) => {
             return
         }
         const updatedData = Object.fromEntries(formData.entries())
-        console.log(updatedData)
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/edit-event/${event._id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': "application/json"
+                },
+                body: JSON.stringify(updatedData)
+            })
+            const result = await res.json()
+            if (result.modifiedCount > 0) {
+                router.refresh()
+                toast.success("Event Updated Successfully")
+            }
+        } catch (error) {
+            toast.error(
+                error instanceof Error
+                    ? error.message
+                    : "Something went wrong!"
+            );
+        }
     }
 
     return (
@@ -83,7 +105,7 @@ const EditEvent = ({ event }: { event: IEvent }) => {
                     {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
                     <DialogFooter>
                         <DialogClose render={<Button type="button" variant="outline" />}>Cancel</DialogClose>
-                        <Button type="submit" className="bg-carecircle-primary text-white hover:bg-carecircle-primary/90">Save changes</Button>
+                        <DialogClose render={<Button type="submit" className="bg-carecircle-primary text-white hover:bg-carecircle-primary/90" />}>Save Changes</DialogClose>
                     </DialogFooter>
                 </form>
             </DialogContent>
