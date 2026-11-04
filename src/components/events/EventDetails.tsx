@@ -34,9 +34,9 @@ const EventDetails = async ({ params }: DetailsProps) => {
     const allJoinedEventsRes = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/join-event/${currentUser?.email}`)
 
     const joinedEvents = await allJoinedEventsRes.json()
-    console.log(joinedEvents)
+
     const checkJoining = joinedEvents.some((joined: IJoinedEventsProps) => joined.event._id.toString() === event._id.toString())
-    console.log(checkJoining)
+
     if (checkJoining) {
         isJoined = true
     }
