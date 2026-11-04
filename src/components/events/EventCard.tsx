@@ -22,7 +22,6 @@ const EventCard = async ({ event }: IEventCardProps) => {
         day: "numeric", month: "short", year: "numeric", timeZone: "Asia/Dhaka",
     }).format(date);
     const typeLabel = eventType;
-    console.log(event)
 
     return (
         <Card className="h-full border-carecircle-primary/15 bg-carecircle-secondary text-carecircle-text shadow-none">
