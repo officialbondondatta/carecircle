@@ -9,6 +9,17 @@ import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
+const getToday = () => {
+    const parts = new Intl.DateTimeFormat("en-US", {
+        timeZone: "Asia/Dhaka",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+    }).formatToParts(new Date())
+    const value = (type: string) => parts.find((part) => part.type === type)?.value
+    return `${value("year")}-${value("month")}-${value("day")}`
+}
+
 const CreateEventPage = () => {
     const router = useRouter()
     const [pending, setPending] = useState(false)
@@ -29,6 +40,11 @@ const CreateEventPage = () => {
         try {
             const form = e.currentTarget
             const data = new FormData(form)
+            const eventDate = data.get("eventDate")
+            if (typeof eventDate !== "string" || !eventDate || eventDate < getToday()) {
+                setError("Please select today or a future date.")
+                return
+            }
             const eventData = Object.fromEntries(data.entries())
             console.log(eventData)
             form.reset()
@@ -57,10 +73,10 @@ const CreateEventPage = () => {
                         <Input id="description" name="description" type="text" autoComplete="description" placeholder="Enter Event Description" required disabled={pending} className="border-carecircle-primary/20 bg-white focus-visible:border-carecircle-primary focus-visible:ring-carecircle-primary/20" />
                     </div>
                     <div className="space-y-2">
-                        <Field>
+                        <Field >
                             <FieldLabel htmlFor="eventType">Event Type</FieldLabel>
                             <Select items={eventTypes} name="eventType" required disabled={pending}>
-                                <SelectTrigger id="eventType">
+                                <SelectTrigger className="bg-white" id="eventType">
                                     <SelectValue placeholder="Select an event type" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -85,7 +101,7 @@ const CreateEventPage = () => {
                     </div>
                     <div className="space-y-2">
                         <label htmlFor="date" className="block text-sm font-medium">Event Date</label>
-                        <Input id="date" name="eventDate" type="date" required disabled={pending} className="border-carecircle-primary/20 bg-white focus-visible:border-carecircle-primary focus-visible:ring-carecircle-primary/20" />
+                        <Input id="date" name="eventDate" type="date" min={getToday()} onFocus={(event) => { event.currentTarget.min = getToday() }} required disabled={pending} className="border-carecircle-primary/20 bg-white focus-visible:border-carecircle-primary focus-visible:ring-carecircle-primary/20" />
                     </div>
                     {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
                     <Button type="submit" disabled={pending} className="h-11 cursor-pointer w-full rounded-full bg-carecircle-button text-carecircle-text hover:bg-carecircle-button/80">
