@@ -4,17 +4,26 @@ import Link from "next/link";
 import { CalendarDays, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import EventCardButtons from "../auth/EventCardButtons";
 
 interface IEventCardProps {
     event: IEvent,
-    // user?: IUserProps
+    showButtons?: boolean,
 }
 
-const EventCard = async ({ event }: IEventCardProps) => {
+const EventCard = async ({ event, showButtons }: IEventCardProps) => {
     const { title, description, eventDate, eventType, image, location, userEmail } = event;
     const res = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/user/${userEmail}`)
     const user: IUserProps = await res.json()
+    const session = await auth.api.getSession({
+        headers: await headers()
+    })
+    const activeUser = session?.user
+    const activeUserEmail = activeUser?.email
 
+    const isUserActive = userEmail === activeUserEmail
     const { name } = user
     const userName = name.split(" ")[0].toLocaleLowerCase()
     const date = new Date(eventDate);
@@ -47,10 +56,14 @@ const EventCard = async ({ event }: IEventCardProps) => {
             </CardContent>
             <CardFooter>
                 <Link href={`/view-details/${event._id}`}>
-                    <Button className="h-10 w-full cursor-pointer bg-carecircle-primary text-white hover:bg-carecircle-primary/90">
+                    <Button className="h-10 rounded-xs w-full cursor-pointer bg-carecircle-primary text-white hover:bg-carecircle-primary/90">
                         View Event
                     </Button>
                 </Link>
+                {
+                    isUserActive && showButtons &&
+                    <EventCardButtons></EventCardButtons>
+                }
             </CardFooter>
         </Card>
     );
