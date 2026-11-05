@@ -17,7 +17,7 @@ async function Copyright() {
 
 const Footer = () => {
     return (
-        <footer className="mt-auto bg-carecircle-primary text-carecircle-bg">
+        <footer className="mt-10 bg-carecircle-primary text-carecircle-bg">
             <div className="mx-auto max-w-7xl px-6 pt-12 lg:px-8">
                 <div className="flex flex-col gap-6 border-b border-carecircle-bg/20 pb-10 sm:flex-row sm:items-center sm:justify-between">
                     <div>

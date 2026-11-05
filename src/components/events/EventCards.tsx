@@ -1,5 +1,7 @@
 import type { IEvent } from "@/lib/types";
 import EventCard from "./EventCard";
+import EventCardSkeleton from "./EventCardSkeleton";
+import EmptyEvents from "./EmptyEvents";
 import { Suspense } from "react";
 import { getToday, sortEventsByDate } from "@/lib/utils";
 
@@ -20,7 +22,7 @@ const EventCards = async () => {
     // const user = session?.user
 
     if (sortedEvents.length === 0) {
-        return <p className="py-10 text-center text-carecircle-text/70">No upcoming events yet.</p>
+        return <EmptyEvents title="No upcoming events yet" description="Have something in mind? Create an event and invite your community to get involved." href="/create-event" buttonText="Create an Event" />
     }
 
     return (
@@ -28,7 +30,7 @@ const EventCards = async () => {
             {
                 sortedEvents.map((event) => (
 
-                    <Suspense key={event._id} fallback={<p>Loading...</p>}>
+                    <Suspense key={event._id} fallback={<EventCardSkeleton />}>
                         <EventCard event={event}  ></EventCard>
                     </Suspense>
 

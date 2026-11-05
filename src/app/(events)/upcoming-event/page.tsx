@@ -1,4 +1,5 @@
 import EventCards from "@/components/events/EventCards";
+import EventCardSkeleton from "@/components/events/EventCardSkeleton";
 import { Suspense } from "react";
 
 
@@ -15,7 +16,11 @@ const upcomingEventPage = () => {
                 </p>
             </header>
             <div className="max-w-7xl mx-auto p-5 lg:p-0">
-                <Suspense fallback={<p>Loading...</p>}>
+                <Suspense fallback={
+                    <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+                        {[1, 2, 3, 4, 5, 6].map((item) => <EventCardSkeleton key={item} />)}
+                    </div>
+                }>
                     <EventCards></EventCards>
                 </Suspense>
             </div>

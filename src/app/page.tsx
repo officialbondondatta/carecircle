@@ -4,13 +4,14 @@ import Gallery from "@/components/home/Gallery";
 import Newsletter from "@/components/home/Newsletter";
 import RecentFeaturedEvents from "@/components/home/RecentFeaturedEvents";
 import { Suspense } from "react";
+import RecentEventsSkeleton from "@/components/home/RecentEventsSkeleton";
 
 export default function Home() {
   return (
     <main>
       <Banner />
       <Features />
-      <Suspense fallback={<p role="status" className="p-5 text-center">Loading featured events…</p>}>
+      <Suspense fallback={<RecentEventsSkeleton />}>
         <RecentFeaturedEvents />
       </Suspense>
       <Gallery />

@@ -47,7 +47,7 @@ const LeaveEvent = ({ event }: { event: IEvent }) => {
 
                     <DialogFooter className={`bg-carecircle-primary`}>
                         <DialogClose render={<Button variant="outline">Cancel</Button>} />
-                        <Button onClick={handleLeaveEvent} className={`bg-carecircle-hyper text-white`}> <span className="flex items-center justify-center gap-1"> <SquareArrowRightExit></SquareArrowRightExit>Leave Event </span></Button>
+                        <Button onClick={handleLeaveEvent} className={`bg-carecircle-hyper hover:bg-carecircle-hyper hover:scale-105 cursor-pointer text-white`}> <span className="flex items-center justify-center gap-1"> <SquareArrowRightExit></SquareArrowRightExit>Leave Event </span></Button>
                     </DialogFooter>
                 </DialogContent>
 
