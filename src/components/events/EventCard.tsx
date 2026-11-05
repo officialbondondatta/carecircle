@@ -7,13 +7,15 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import EventCardButtons from "../auth/EventCardButtons";
+import LeaveEvent from "./LeaveEvent";
 
 interface IEventCardProps {
     event: IEvent,
     showButtons?: boolean,
+    showJoinedEventsButtons?: boolean,
 }
 
-const EventCard = async ({ event, showButtons }: IEventCardProps) => {
+const EventCard = async ({ event, showButtons, showJoinedEventsButtons }: IEventCardProps) => {
     const { title, description, eventDate, eventType, image, location, userEmail } = event;
     const res = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/user/${userEmail}`)
     const user: IUserProps = await res.json()
@@ -63,6 +65,10 @@ const EventCard = async ({ event, showButtons }: IEventCardProps) => {
                 {
                     isUserActive && showButtons &&
                     <EventCardButtons event={event}></EventCardButtons>
+                }
+                {
+                    activeUser && showJoinedEventsButtons &&
+                    <LeaveEvent event={event}></LeaveEvent>
                 }
             </CardFooter>
         </Card>
