@@ -19,28 +19,28 @@ const Navbar = () => {
                 </Link>
 
                 <div className="flex shrink-0 items-center gap-0 sm:gap-2 lg:order-last">
-                <AuthButtons placement="account" />
-                <div className="hidden lg:block">
-                    <AuthButtons placement="menu" />
-                </div>
-                <ThemeToggle />
-                <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
-                    aria-expanded={isOpen}
-                    aria-controls="navbar-links"
-                    onClick={() => setIsOpen(!isOpen)}
-                    className="size-9 text-carecircle-primary sm:size-11 lg:hidden"
-                >
-                    {isOpen ? <X className="size-6" /> : <Menu className="size-6" />}
-                </Button>
+                    <AuthButtons placement="account" />
+                    <div className="hidden lg:block">
+                        <AuthButtons placement="menu" />
+                    </div>
+                    <ThemeToggle />
+                    <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
+                        aria-expanded={isOpen}
+                        aria-controls="navbar-links"
+                        onClick={() => setIsOpen(!isOpen)}
+                        className="size-9 text-carecircle-primary sm:size-11 lg:hidden"
+                    >
+                        {isOpen ? <X className="size-6" /> : <Menu className="size-6" />}
+                    </Button>
                 </div>
 
                 <div
                     id="navbar-links"
-                    className={`${isOpen ? "flex" : "hidden"} order-4 w-full flex-col items-start gap-5 border-t border-carecircle-primary/15 pt-5 mt-4 lg:order-none lg:mt-0 lg:ml-auto lg:flex lg:w-auto lg:flex-row lg:items-center lg:border-0 lg:pt-0`}
+                    className={`${isOpen ? "flex" : "hidden"} order-4 w-full flex-col items-start gap-5 border-t border-carecircle-primary/15 pt-5 mt-4 lg:order-0 lg:mt-0 lg:ml-auto lg:flex lg:w-auto lg:flex-row lg:items-center lg:border-0 lg:pt-0`}
                     onClick={(event) => {
                         if (event.target instanceof Element && event.target.closest("a")) setIsOpen(false);
                     }}
@@ -51,9 +51,9 @@ const Navbar = () => {
                         }
                     }}
                 >
-                <Link href="/upcoming-event" onClick={() => setIsOpen(false)} className="flex min-h-11 items-center gap-2 whitespace-nowrap text-xs font-bold text-carecircle-primary underline-offset-4 hover:underline sm:text-base">
-                    <Lightbulb className="size-5" aria-hidden="true" /> Upcoming Events
-                </Link>
+                    <Link href="/upcoming-event" onClick={() => setIsOpen(false)} className="flex min-h-11 items-center gap-2 whitespace-nowrap text-xs font-bold text-carecircle-primary underline-offset-4 hover:underline sm:text-base">
+                        <Lightbulb className="size-5" aria-hidden="true" /> Upcoming Events
+                    </Link>
 
                     <div className="lg:hidden">
                         <AuthButtons placement="menu" />
