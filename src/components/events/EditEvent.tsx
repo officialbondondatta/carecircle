@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { getTokenFromClient } from "@/lib/getTokenFromClient";
 import type { IEvent } from "@/lib/types"
 import { eventTypes, getToday } from "@/lib/utils"
-import { Edit } from "lucide-react"
+import { Edit, LoaderCircle } from "lucide-react"
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react"
 import { toast } from "sonner";
@@ -18,12 +18,15 @@ import { toast } from "sonner";
 
 const EditEvent = ({ event }: { event: IEvent }) => {
     const { title, description, eventDate, eventType, location, image } = event
+    const [pending, setPending] = useState(false)
+    const [open, setOpen] = useState(false)
     const [error, setError] = useState("")
     const [minDate, setMinDate] = useState("")
     const router = useRouter()
 
     const handleEditEvent = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
+        if (pending) return
         setError("")
         const formData = new FormData(e.currentTarget)
         const date = String(formData.get("eventDate"))
@@ -32,6 +35,7 @@ const EditEvent = ({ event }: { event: IEvent }) => {
             return
         }
         const updatedData = Object.fromEntries(formData.entries())
+        setPending(true)
         try {
             const token = await getTokenFromClient()
             const res = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/edit-event/${event._id}`, {
@@ -43,7 +47,11 @@ const EditEvent = ({ event }: { event: IEvent }) => {
                 body: JSON.stringify(updatedData)
             })
             const result = await res.json()
+            if (!res.ok) {
+                throw new Error(result.message || "Unable to update the event. Please try again.")
+            }
             if (result.modifiedCount > 0) {
+                setOpen(false)
                 router.refresh()
                 toast.success("Event Updated Successfully")
             }
@@ -53,11 +61,15 @@ const EditEvent = ({ event }: { event: IEvent }) => {
                     ? error.message
                     : "Something went wrong!"
             );
+        } finally {
+            setPending(false)
         }
     }
 
     return (
-        <Dialog onOpenChange={(open) => {
+        <Dialog open={open} onOpenChange={(open) => {
+            if (pending) return
+            setOpen(open)
             setError("")
             if (open) setMinDate(getToday())
         }}>
@@ -65,7 +77,7 @@ const EditEvent = ({ event }: { event: IEvent }) => {
                 <Edit aria-hidden="true" /> Edit
             </DialogTrigger>
             <DialogContent className="max-h-[85vh] overflow-y-auto bg-carecircle-bg sm:max-w-lg">
-                <form onSubmit={handleEditEvent} className="space-y-5">
+                <form aria-busy={pending} onSubmit={handleEditEvent} className="space-y-5">
                     <DialogHeader>
                         <DialogTitle className="text-carecircle-primary">Edit event</DialogTitle>
                         <DialogDescription>Update your event details below.</DialogDescription>
@@ -73,15 +85,15 @@ const EditEvent = ({ event }: { event: IEvent }) => {
                     <FieldGroup className="gap-4">
                         <Field>
                             <Label htmlFor="title">Event Title</Label>
-                            <Input id="title" name="title" defaultValue={title} required className="bg-white" />
+                            <Input id="title" name="title" defaultValue={title} disabled={pending} required className="bg-white" />
                         </Field>
                         <Field>
                             <Label htmlFor="description">Description</Label>
-                            <Input id="description" name="description" defaultValue={description} required className="bg-white" />
+                            <Input id="description" name="description" defaultValue={description} disabled={pending} required className="bg-white" />
                         </Field>
                         <Field>
                             <Label htmlFor="eventType">Event Type</Label>
-                            <Select name="eventType" items={eventTypes} defaultValue={eventType} required>
+                            <Select name="eventType" items={eventTypes} defaultValue={eventType} disabled={pending} required>
                                 <SelectTrigger id="eventType" className="w-full bg-white"><SelectValue /></SelectTrigger>
                                 <SelectContent>
                                     {eventTypes.map((type) => <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>)}
@@ -90,11 +102,11 @@ const EditEvent = ({ event }: { event: IEvent }) => {
                         </Field>
                         <Field>
                             <Label htmlFor="image">Event Thumbnail URL</Label>
-                            <Input id="image" name="image" type="url" defaultValue={image} required className="bg-white" />
+                            <Input id="image" name="image" type="url" defaultValue={image} disabled={pending} required className="bg-white" />
                         </Field>
                         <Field>
                             <Label htmlFor="location">Location</Label>
-                            <Input id="location" name="location" defaultValue={location} required className="bg-white" />
+                            <Input id="location" name="location" defaultValue={location} disabled={pending} required className="bg-white" />
                         </Field>
                         <Field>
                             <Label htmlFor="eventDate">Event Date</Label>
@@ -102,13 +114,16 @@ const EditEvent = ({ event }: { event: IEvent }) => {
                                 const today = getToday()
                                 e.currentTarget.min = today
                                 setMinDate(today)
-                            }} required className="bg-white" />
+                            }} disabled={pending} required className="bg-white" />
                         </Field>
                     </FieldGroup>
                     {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
                     <DialogFooter>
-                        <DialogClose render={<Button type="button" variant="outline" />}>Cancel</DialogClose>
-                        <DialogClose render={<Button type="submit" className="bg-carecircle-primary text-white hover:bg-carecircle-primary/90" />}>Save Changes</DialogClose>
+                        <DialogClose render={<Button disabled={pending} type="button" variant="outline" />}>Cancel</DialogClose>
+                        <Button type="submit" disabled={pending} aria-busy={pending} className="bg-carecircle-primary text-white hover:bg-carecircle-primary/90">
+                            {pending && <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />}
+                            {pending ? "Saving changes…" : "Save Changes"}
+                        </Button>
                     </DialogFooter>
                 </form>
             </DialogContent>

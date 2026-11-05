@@ -3,8 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { auth } from "@/lib/auth";
-import { authClient, useSession } from "@/lib/auth-client";
+import { useSession } from "@/lib/auth-client";
 import { getTokenFromClient } from "@/lib/getTokenFromClient";
 import { eventTypes, getToday } from "@/lib/utils";
 import { LoaderCircle } from "lucide-react";
@@ -24,6 +23,7 @@ const CreateEventForm = () => {
 
     const handleCreateEvent = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
+        if (pending) return
         setError("")
         setPending(true)
         try {
@@ -53,12 +53,12 @@ const CreateEventForm = () => {
                 if (!res.ok) {
                     throw new Error(result.message || "Failed to create event");
                 }
-                console.log(result)
                 toast.success("Event Created Successfully")
             } catch (error) {
                 toast.error(
                     error instanceof Error ? error.message : "Something went wrong"
                 );
+                return
             }
             form.reset()
             router.push('/upcoming-event')
@@ -118,9 +118,9 @@ const CreateEventForm = () => {
                         <Input id="date" name="eventDate" type="date" min={getToday()} onFocus={(event) => { event.currentTarget.min = getToday() }} required disabled={pending} className="border-carecircle-primary/20 bg-white focus-visible:border-carecircle-primary focus-visible:ring-carecircle-primary/20" />
                     </div>
                     {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
-                    <Button type="submit" disabled={pending} className="h-11 cursor-pointer w-full rounded-full bg-carecircle-button text-carecircle-text hover:bg-carecircle-button/80">
+                    <Button type="submit" aria-busy={pending} disabled={pending} className="h-11 cursor-pointer w-full rounded-full bg-carecircle-button text-carecircle-text hover:bg-carecircle-button/80">
                         {pending && <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />}
-                        {pending ? "Creating Event" : "Create Event"}
+                        {pending ? "Creating event…" : "Create Event"}
                     </Button>
                 </form>
             </section>

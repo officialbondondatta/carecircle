@@ -2,16 +2,22 @@
 import { IEvent } from "@/lib/types";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 import { Button } from "../ui/button";
-import { SquareArrowRightExit } from "lucide-react";
+import { LoaderCircle, SquareArrowRightExit } from "lucide-react";
 import { toast } from "sonner";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { getTokenFromClient } from "@/lib/getTokenFromClient";
+
+import { useState } from "react";
 
 const LeaveEvent = ({ event }: { event: IEvent }) => {
     const router = useRouter()
+    const [pending, setPending] = useState(false)
+    const [open, setOpen] = useState(false)
     const handleLeaveEvent = async () => {
-        const token = await getTokenFromClient()
+        if (pending) return
+        setPending(true)
         try {
+            const token = await getTokenFromClient()
             const res = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/join-event/${event._id}`, {
                 method: "DELETE",
                 headers: {
@@ -19,7 +25,11 @@ const LeaveEvent = ({ event }: { event: IEvent }) => {
                 }
             })
             const result = await res.json()
+            if (!res.ok || !result.deletedCount) {
+                throw new Error(result.message || "Unable to leave the event. Please try again.")
+            }
             if (result.deletedCount > 0) {
+                setOpen(false)
                 toast.success("Left the event Successfully")
                 router.refresh()
             }
@@ -28,11 +38,13 @@ const LeaveEvent = ({ event }: { event: IEvent }) => {
                 error instanceof Error ?
                     error.message : "Something went wrong"
             )
+        } finally {
+            setPending(false)
         }
     }
     return (
         <div>
-            <Dialog>
+            <Dialog open={open} onOpenChange={(nextOpen) => { if (!pending) setOpen(nextOpen) }}>
                 <DialogTrigger render={<Button className={`bg-carecircle-hyper cursor-pointer hover:scale-105 hover:bg-carecircle-hyper text-sm text-white rounded-xs py-5 px-5 font-semibold`}>
                     <span className="flex items-center justify-center gap-1"> <SquareArrowRightExit></SquareArrowRightExit>  Leave Event</span>
                 </Button>} />
@@ -50,8 +62,8 @@ const LeaveEvent = ({ event }: { event: IEvent }) => {
                     </DialogHeader>
 
                     <DialogFooter className={`bg-carecircle-primary`}>
-                        <DialogClose render={<Button variant="outline">Cancel</Button>} />
-                        <Button onClick={handleLeaveEvent} className={`bg-carecircle-hyper hover:bg-carecircle-hyper hover:scale-105 cursor-pointer text-white`}> <span className="flex items-center justify-center gap-1"> <SquareArrowRightExit></SquareArrowRightExit>Leave Event </span></Button>
+                        <DialogClose render={<Button disabled={pending} variant="outline">Cancel</Button>} />
+                        <Button disabled={pending} aria-busy={pending} onClick={handleLeaveEvent} className={`bg-carecircle-hyper hover:bg-carecircle-hyper hover:scale-105 cursor-pointer text-white`}> <span className="flex items-center justify-center gap-1"> {pending ? <LoaderCircle className="size-4 animate-spin" aria-hidden="true" /> : <SquareArrowRightExit aria-hidden="true" />}{pending ? "Leaving event…" : "Leave Event"}</span></Button>
                     </DialogFooter>
                 </DialogContent>
 
