@@ -35,7 +35,7 @@ const EventCard = async ({ event, showButtons, showJoinedEventsButtons }: IEvent
     const typeLabel = eventType;
 
     return (
-        <Card className="h-full border-carecircle-primary/15 bg-carecircle-secondary text-carecircle-text shadow-none">
+        <Card className="h-full hover:border-carecircle-button border-carecircle-primary/15 bg-carecircle-secondary text-carecircle-text shadow-none">
             {image && (
                 <div className="relative aspect-video bg-carecircle-primary/10">
                     <Image src={image} alt={title} fill unoptimized sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw" loading="eager" className="object-cover" />
@@ -58,7 +58,7 @@ const EventCard = async ({ event, showButtons, showJoinedEventsButtons }: IEvent
             </CardContent>
             <CardFooter className="flex-wrap gap-2">
                 <Link href={`/view-details/${event._id}`}>
-                    <Button className="h-10 rounded-xs w-full cursor-pointer bg-carecircle-primary text-white hover:bg-carecircle-primary/90">
+                    <Button className="h-10 hover:scale-105 rounded-xs w-full cursor-pointer bg-carecircle-primary text-white hover:bg-carecircle-primary/90">
                         View Event
                     </Button>
                 </Link>
