@@ -6,6 +6,7 @@ import { IEvent } from "@/lib/types";
 import { headers } from "next/headers";
 import { Suspense } from "react";
 import { getTokenFromServer } from "@/lib/getTokenFromServer";
+import { sortEventsByDate } from "@/lib/utils";
 
 const ManageEventContent = async () => {
     const session = await auth.api.getSession({
@@ -23,6 +24,7 @@ const ManageEventContent = async () => {
         throw new Error("Unable to load events.")
     }
     const events: IEvent[] = await res.json()
+    const sortedEvents = sortEventsByDate(events)
 
     if (events.length === 0) {
         return <EmptyEvents title="No events to manage yet" description="You haven’t created any events. Start one and bring your community together." href="/create-event" buttonText="Create an Event" />
@@ -30,7 +32,7 @@ const ManageEventContent = async () => {
 
     return (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {events.map(event => (
+            {sortedEvents.map(event => (
                 <Suspense key={event._id} fallback={<EventCardSkeleton />}>
                     <EventCard event={event} showButtons={true} />
                 </Suspense>
