@@ -1,3 +1,5 @@
+"use client";
+
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -9,6 +11,7 @@ import {
 import UserDetails from "./UserDetails";
 import { IUserProps } from "@/lib/types";
 import Link from "next/link";
+
 
 const UserDropDown = ({ user }: { user: IUserProps }) => {
 

@@ -4,8 +4,10 @@ import { IEvent } from "@/lib/types";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import EventCardSkeleton from "@/components/events/EventCardSkeleton";
+import { connection } from "next/server";
 
 const RecentFeaturedEvents = async () => {
+    await connection()
     const result = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/featured-section`, {
         cache: "no-store"
     })
