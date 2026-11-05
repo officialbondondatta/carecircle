@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import ProfileForm from "@/components/auth/ProfileForm";
+import ProfileSkeleton from "@/components/auth/ProfileSkeleton";
 
 async function ProfileContent() {
     const session = await auth.api.getSession({
@@ -20,7 +21,7 @@ export default function MyProfilePage() {
                 <h1 className="text-3xl font-semibold text-carecircle-primary">My Profile</h1>
                 <p className="mt-2 text-carecircle-text/70">A familiar face makes a community feel closer.</p>
             </header>
-            <Suspense fallback={<p role="status" className="rounded-2xl bg-carecircle-secondary p-8">Loading your profile…</p>}>
+            <Suspense fallback={<ProfileSkeleton />}>
                 <ProfileContent />
             </Suspense>
         </main>
