@@ -6,6 +6,7 @@ import { authClient } from '@/lib/auth-client';
 import { toast } from 'sonner';
 import { IUserProps } from '@/lib/types';
 import { DropdownMenuTrigger } from '../ui/dropdown-menu';
+import { redirect } from 'next/navigation';
 
 interface UserDetailsProps extends React.ComponentProps<"div"> {
     user: IUserProps;
@@ -17,6 +18,7 @@ const UserDetails = ({ user, ...props }: UserDetailsProps) => {
         const result = await authClient.signOut()
         if (result?.data?.success) {
             toast.success("Logged Out Successfully")
+            redirect("/")
         }
     }
     return (
