@@ -56,7 +56,7 @@ const EventCard = async ({ event, showButtons, showJoinedEventsButtons }: IEvent
                     <p className="flex items-start gap-2"><MapPin className="mt-0.5 size-4 shrink-0 text-carecircle-primary" aria-hidden="true" /><span className="wrap-break-word">{location}</span></p>
                 </div>
             </CardContent>
-            <CardFooter>
+            <CardFooter className="flex-wrap gap-2">
                 <Link href={`/view-details/${event._id}`}>
                     <Button className="h-10 rounded-xs w-full cursor-pointer bg-carecircle-primary text-white hover:bg-carecircle-primary/90">
                         View Event

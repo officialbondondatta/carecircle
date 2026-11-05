@@ -25,7 +25,7 @@ const JoinedEventPage = () => {
                 <h2 className="text-3xl">Joined Events</h2>
                 <p>Keep track of the events you&apos;ve joined and stay updated.</p>
             </header>
-            <div className="max-w-7xl mx-auto">
+            <div className="max-w-7xl mx-auto p-5 lg:p-0">
                 <Suspense fallback={<p role="status">Loading joined events…</p>}>
                     <JoinedEventList />
                 </Suspense>

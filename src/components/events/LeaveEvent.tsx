@@ -29,7 +29,7 @@ const LeaveEvent = ({ event }: { event: IEvent }) => {
     return (
         <div>
             <Dialog>
-                <DialogTrigger render={<Button className={`bg-carecircle-hyper cursor-pointer hover:scale-105 hover:bg-carecircle-hyper text-sm ml-2 text-white rounded-xs py-5 px-5  font-semibold`}>
+                <DialogTrigger render={<Button className={`bg-carecircle-hyper cursor-pointer hover:scale-105 hover:bg-carecircle-hyper text-sm text-white rounded-xs py-5 px-5 font-semibold`}>
                     <span className="flex items-center justify-center gap-1"> <SquareArrowRightExit></SquareArrowRightExit>  Leave Event</span>
                 </Button>} />
                 <DialogContent className="sm:max-w-sm bg-carecircle-button">

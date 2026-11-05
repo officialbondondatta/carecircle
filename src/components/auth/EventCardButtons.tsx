@@ -5,7 +5,7 @@ import DeleteEvent from "../events/DeleteEvent";
 const EventCardButtons = ({ event }: { event: IEvent }) => {
 
     return (
-        <div className="flex gap-2 ml-2">
+        <div className="flex min-w-0 max-w-full flex-wrap gap-2">
 
             <EditEvent event={event}></EditEvent>
 

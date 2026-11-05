@@ -32,7 +32,7 @@ const Gallery = () => {
                 <div className="grid gap-6 md:grid-cols-3">
                     {photos.map((photo) => (
                         <figure key={photo.title} className="overflow-hidden rounded-xl bg-carecircle-bg">
-                            <div className="relative aspect-[4/3]">
+                            <div className="relative aspect-4/3">
                                 <Image src={photo.image} alt={photo.alt} fill sizes="(min-width: 768px) 33vw, 100vw" className="object-cover" />
                             </div>
                             <figcaption className="p-5">
