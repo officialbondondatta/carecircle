@@ -1,7 +1,7 @@
 import type { IEvent } from "@/lib/types";
 import EventCard from "./EventCard";
 import { Suspense } from "react";
-import { getToday } from "@/lib/utils";
+import { getToday, sortEventsByDate } from "@/lib/utils";
 
 
 const EventCards = async () => {
@@ -11,13 +11,7 @@ const EventCards = async () => {
     const upcomingEvents = allevents.filter((event) =>
         new Date(event.eventDate).getTime() >= startOfToday
     )
-    const sortedEvents = upcomingEvents.sort((a, b) => {
-        const firstDate = new Date(a.eventDate).getTime()
-        const secondDate = new Date(b.eventDate).getTime()
-        if (Number.isNaN(firstDate)) return Number.isNaN(secondDate) ? 0 : 1
-        if (Number.isNaN(secondDate)) return -1
-        return firstDate - secondDate
-    })
+    const sortedEvents = sortEventsByDate(upcomingEvents)
 
 
     // const session = await auth.api.getSession({

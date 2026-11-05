@@ -1,5 +1,6 @@
 import { IEvent } from "@/lib/types";
 import EventCard from "./EventCard";
+import { sortEventsByDate } from "@/lib/utils";
 
 export interface IJoinedEventsShowCaseProps {
     joinedUserEmail: string,
@@ -11,6 +12,7 @@ interface IJoinedEventsProps {
 }
 
 const JoinedEvents = ({ events }: IJoinedEventsProps) => {
+    const sortedEvents = sortEventsByDate(events.map(({ event }) => event))
     return (
         <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-5">
             {
@@ -19,7 +21,7 @@ const JoinedEvents = ({ events }: IJoinedEventsProps) => {
                 </div>
             }
             {
-                events.map(({ event }: { event: IEvent }) => (
+                sortedEvents.map((event) => (
                     <EventCard key={event._id} event={event} showJoinedEventsButtons={true}></EventCard>
                 ))
             }
