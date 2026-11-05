@@ -6,13 +6,21 @@ import { Suspense } from "react";
 import EventCardSkeleton from "@/components/events/EventCardSkeleton";
 
 const JoinedEventList = async () => {
+    const retriveToken = await auth.api.getToken({
+        headers: await headers()
+    })
+    const token = retriveToken?.token
+
     const session = await auth.api.getSession({
         headers: await headers()
     })
     const user = session?.user
     if (!user) redirect("/signin")
     const res = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/join-event/${(user.email)}`, {
-        cache: "no-store"
+        cache: "no-store",
+        headers: {
+            authorization: `Bearer ${token}`
+        }
     })
     if (!res.ok) throw new Error("Unable to load joined events.")
     const joinedEvents: IJoinedEventsShowCaseProps[] = await res.json()

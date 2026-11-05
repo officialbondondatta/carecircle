@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useSession } from "@/lib/auth-client";
+import { authClient, useSession } from "@/lib/auth-client";
 import { eventTypes, getToday } from "@/lib/utils";
 import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -13,6 +13,7 @@ import { toast } from "sonner";
 
 
 const CreateEventForm = () => {
+
     const router = useRouter()
     const { data: session } = useSession()
     const user = session?.user
@@ -35,11 +36,22 @@ const CreateEventForm = () => {
             const userEmail = user?.email
             const newEventData = { userEmail, ...eventData }
 
+
             try {
+                const { data, error } = await authClient.token()
+                if (error) {
+                    console.dir(error)
+                    toast.error(
+                        error instanceof Error ?
+                            error?.message : "Something went wrong"
+                    )
+                }
+                const token = data?.token
                 const res = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/create-event`, {
                     method: "POST",
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        authorization: `Bearer ${token}`
                     },
                     body: JSON.stringify(newEventData)
                 })
