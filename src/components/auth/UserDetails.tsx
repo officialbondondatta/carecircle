@@ -26,7 +26,7 @@ const UserDetails = ({ user, ...props }: UserDetailsProps) => {
             <Tooltip>
                 <TooltipTrigger render={<DropdownMenuTrigger />} aria-label="Open user menu" className="rounded-full outline-none focus-visible:ring-2 focus-visible:ring-carecircle-primary focus-visible:ring-offset-2">
                     <Avatar className={`size-11 shrink-0 cursor-pointer`} >
-                        <AvatarImage className={`object-cover`} src={user?.image || "https://i.ibb.co.com/KcckVn5v/lucifer-style-avatar.png"} alt={user?.name || "User avatar"} />
+                        <AvatarImage className={`object-cover`} src={user?.image || undefined} alt={user?.name || "User avatar"} />
                         <AvatarFallback>
                             {user?.name?.charAt(0)?.toUpperCase() || "U"}
                         </AvatarFallback>

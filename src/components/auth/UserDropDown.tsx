@@ -27,6 +27,12 @@ const UserDropDown = ({ user }: { user: IUserProps }) => {
                             </span>
                         </p>
                     </DropdownMenuLabel>
+                    <DropdownMenuItem >
+                        <Link href="/my-profile">
+                            My Profile
+                        </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem>
                         <Link href={"/create-event"}>Create Event</Link>
                     </DropdownMenuItem>
