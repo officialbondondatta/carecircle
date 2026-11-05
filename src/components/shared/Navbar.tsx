@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Lightbulb, Menu, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import ThemeToggle from "./ThemeToggle";
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -17,6 +18,8 @@ const Navbar = () => {
                     <Image src="/carecircle-logo.svg" alt="Care Circle home" fill sizes="(min-width: 768px) 180px, 160px" priority className="object-contain" />
                 </Link>
 
+                <div className="ml-auto flex items-center gap-2 md:order-last md:ml-0">
+                <ThemeToggle />
                 <Button
                     type="button"
                     variant="ghost"
@@ -29,6 +32,7 @@ const Navbar = () => {
                 >
                     {isOpen ? <X className="size-6" /> : <Menu className="size-6" />}
                 </Button>
+                </div>
 
                 <div
                     id="navbar-links"

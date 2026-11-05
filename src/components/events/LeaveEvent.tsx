@@ -41,10 +41,10 @@ const LeaveEvent = ({ event }: { event: IEvent }) => {
                         <DialogTitle>Leave Event</DialogTitle>
                         <h2 className="text-xl font-bold">{event?.title}</h2>
                         <div className="flex gap-2">
-                            <span className="bg-carecircle-secondary text-xs self-start px-3 py-1">{event.eventType}</span>
-                            <span className="bg-carecircle-secondary text-xs self-start px-3 py-1">{event.eventDate}</span>
+                            <span className="bg-carecircle-secondary text-white text-xs self-start px-3 py-1">{event.eventType}</span>
+                            <span className="bg-carecircle-secondary text-white text-xs self-start px-3 py-1">{event.eventDate}</span>
                         </div>
-                        <DialogDescription>
+                        <DialogDescription className={`text-slate-600`}>
                             Are you sure you want to leave this event? This action cannot be undone.
                         </DialogDescription>
                     </DialogHeader>

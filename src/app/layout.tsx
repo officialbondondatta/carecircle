@@ -5,6 +5,7 @@ import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
 import { Toaster } from "sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import ThemeProvider from "@/components/shared/ThemeProvider";
 
 
 const josefin_sans = Josefin_Sans({
@@ -20,15 +21,18 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${josefin_sans.className} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-carecircle-bg">
+        <ThemeProvider>
         <TooltipProvider>
           <Navbar></Navbar>
           {children}
           <Footer></Footer>
           <Toaster position="top-right" richColors />
         </TooltipProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
