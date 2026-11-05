@@ -5,14 +5,16 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import EventCardSkeleton from "@/components/events/EventCardSkeleton";
 import { connection } from "next/server";
+import { filterEventsByPeriod, getToday } from "@/lib/utils";
 
 const RecentFeaturedEvents = async () => {
     await connection()
-    const result = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/featured-section`, {
+    const result = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/all-events`, {
         cache: "no-store"
     })
     if (!result.ok) throw new Error("Unable to load upcoming events.")
-    const events: IEvent[] = await result.json()
+    const allEvents: IEvent[] = await result.json()
+    const events = filterEventsByPeriod(allEvents, "upcoming", getToday()).slice(0, 6)
     return (
         <section className="mx-auto max-w-7xl px-6 py-14 lg:py-20" aria-labelledby="recent-events-heading">
             <header className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">

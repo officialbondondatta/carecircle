@@ -9,6 +9,8 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { getTokenFromServer } from "@/lib/getTokenFromServer";
 
+import { getToday, isPastEvent } from "@/lib/utils";
+
 const EventDetails = async ({ params }: DetailsProps) => {
     //event-id
     const { id } = await params;
@@ -24,6 +26,7 @@ const EventDetails = async ({ params }: DetailsProps) => {
     //single-event
     const response = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/all-events/${id}`);
     const event = await response.json()
+    const ended = isPastEvent(event.eventDate, getToday())
 
     //date-format
     const date = new Date(event.eventDate);
@@ -40,7 +43,7 @@ const EventDetails = async ({ params }: DetailsProps) => {
 
     let isJoined = false
 
-    if (currentUser) {
+    if (currentUser && !ended) {
         //token
         const token = await getTokenFromServer()
         const allJoinedEventsRes = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/join-event/${currentUser?.email}`, {
@@ -60,7 +63,7 @@ const EventDetails = async ({ params }: DetailsProps) => {
 
     return (
         <main className="mx-auto w-full max-w-3xl px-5 py-10">
-            <Link href="/upcoming-event" className="mb-5 inline-block text-sm text-carecircle-primary hover:underline">← Back to upcoming events</Link>
+            <Link href={ended ? "/past-events" : "/upcoming-event"} className="mb-5 inline-block text-sm text-carecircle-primary hover:underline">← Back to {ended ? "past" : "upcoming"} events</Link>
             <Card className="border-carecircle-primary/15 bg-carecircle-secondary text-carecircle-text shadow-none">
                 {event.image && <div className="relative aspect-video"><Image src={event.image} alt={event.title} fill loading="eager" unoptimized sizes="(min-width: 768px) 728px, 100vw" className="object-cover" /></div>}
                 <CardHeader>
@@ -76,7 +79,7 @@ const EventDetails = async ({ params }: DetailsProps) => {
                     <p className="whitespace-pre-wrap wrap-break-word leading-relaxed">{event.description}</p>
                     <div className="self-center flex items-center justify-center">
                         {
-                            isJoined ?
+                            ended ? <p className="rounded-full bg-carecircle-primary/10 px-5 py-3 text-sm font-medium text-carecircle-primary">This event has ended</p> : isJoined ?
                                 <Button disabled className={`bg-carecircle-button text-carecircle-primary  font-bold py-5 px-8 hover:bg-carecircle-button hover:scale-105 cursor-not-allowed`}> Already Joined</Button>
                                 :
                                 <Suspense>

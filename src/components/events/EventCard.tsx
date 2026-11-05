@@ -12,10 +12,11 @@ import LeaveEvent from "./LeaveEvent";
 interface IEventCardProps {
     event: IEvent,
     showButtons?: boolean,
+    ended?: boolean,
     showJoinedEventsButtons?: boolean,
 }
 
-const EventCard = async ({ event, showButtons, showJoinedEventsButtons }: IEventCardProps) => {
+const EventCard = async ({ event, showButtons, showJoinedEventsButtons, ended }: IEventCardProps) => {
     const { title, description, eventDate, eventType, image, location, userEmail } = event;
     const res = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/user/${userEmail}`)
     const user: IUserProps = await res.json()
@@ -42,7 +43,8 @@ const EventCard = async ({ event, showButtons, showJoinedEventsButtons }: IEvent
                 </div>
             )}
             <CardHeader>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
+                    {ended && <span className="w-fit rounded-full bg-carecircle-primary/10 px-3 py-1 text-xs font-medium text-carecircle-primary">Ended</span>}
                     <span className="w-fit rounded-full bg-carecircle-button px-3 py-1 text-xs font-medium text-carecircle-primary">{typeLabel}</span>
                     <span className="w-fit rounded-full bg-carecircle-primary px-3 py-1 text-xs font-medium text-carecircle-secondary">{userName}</span>
 

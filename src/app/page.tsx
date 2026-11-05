@@ -1,3 +1,4 @@
+import PastEvents from "@/components/events/PastEvents";
 import Banner from "@/components/home/Banner";
 import Features from "@/components/home/Features";
 import Gallery from "@/components/home/Gallery";
@@ -14,6 +15,7 @@ export default function Home() {
       <Suspense fallback={<RecentEventsSkeleton />}>
         <RecentFeaturedEvents />
       </Suspense>
+      <Suspense fallback={<RecentEventsSkeleton />}><PastEvents preview /></Suspense>
       <Gallery />
       <Newsletter />
     </main>
