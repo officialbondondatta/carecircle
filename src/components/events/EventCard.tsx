@@ -1,5 +1,5 @@
 import type { IEvent, IUserProps } from "@/lib/types";
-import Image from "next/image";
+import EventImage from "./EventImage";
 import Link from "next/link";
 import { CalendarDays, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -18,17 +18,17 @@ interface IEventCardProps {
 
 const EventCard = async ({ event, showButtons, showJoinedEventsButtons, ended }: IEventCardProps) => {
     const { title, description, eventDate, eventType, image, location, userEmail } = event;
-    const res = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/user/${userEmail}`)
-    const user: IUserProps = await res.json()
-    const session = await auth.api.getSession({
+    const res = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/user/${encodeURIComponent(userEmail)}`)
+    if (!res.ok) throw new Error(`Unable to load event organizer (${res.status}).`)
+    const user: IUserProps | null = await res.json()
+    const session = showButtons || showJoinedEventsButtons ? await auth.api.getSession({
         headers: await headers()
-    })
+    }) : null
     const activeUser = session?.user
     const activeUserEmail = activeUser?.email
 
     const isUserActive = userEmail === activeUserEmail
-    const { name } = user
-    const userName = name.split(" ")[0].toLocaleLowerCase()
+    const userName = user?.name?.trim().split(/\s+/)[0]?.toLocaleLowerCase() || "Community organizer"
     const date = new Date(eventDate);
     const formattedDate = Number.isNaN(date.getTime()) ? eventDate : new Intl.DateTimeFormat("en-GB", {
         day: "numeric", month: "short", year: "numeric", timeZone: "Asia/Dhaka",
@@ -37,11 +37,7 @@ const EventCard = async ({ event, showButtons, showJoinedEventsButtons, ended }:
 
     return (
         <Card className="h-full hover:border-carecircle-button border-carecircle-primary/15 bg-carecircle-secondary text-carecircle-text shadow-none">
-            {image && (
-                <div className="relative aspect-video bg-carecircle-primary/10">
-                    <Image src={image} alt={title} fill unoptimized sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw" loading="eager" className="object-cover" />
-                </div>
-            )}
+            <EventImage key={image} src={image} alt={title} sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw" />
             <CardHeader>
                 <div className="flex flex-wrap gap-2">
                     {ended && <span className="w-fit rounded-full bg-carecircle-primary/10 px-3 py-1 text-xs font-medium text-carecircle-primary">Ended</span>}

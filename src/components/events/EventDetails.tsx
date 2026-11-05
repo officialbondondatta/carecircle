@@ -1,4 +1,4 @@
-import Image from "next/image";
+import EventImage from "./EventImage";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import Link from "next/link";
 import { DetailsProps } from "@/app/(events)/view-details/[id]/page";
@@ -65,7 +65,7 @@ const EventDetails = async ({ params }: DetailsProps) => {
         <main className="mx-auto w-full max-w-3xl px-5 py-10">
             <Link href={ended ? "/past-events" : "/upcoming-event"} className="mb-5 inline-block text-sm text-carecircle-primary hover:underline">← Back to {ended ? "past" : "upcoming"} events</Link>
             <Card className="border-carecircle-primary/15 bg-carecircle-secondary text-carecircle-text shadow-none">
-                {event.image && <div className="relative aspect-video"><Image src={event.image} alt={event.title} fill loading="eager" unoptimized sizes="(min-width: 768px) 728px, 100vw" className="object-cover" /></div>}
+                <EventImage key={event.image} src={event.image} alt={event.title} sizes="(min-width: 768px) 728px, 100vw" />
                 <CardHeader>
                     <p className="text-sm text-carecircle-primary">{event.eventType === "BloodDonation" ? "Blood Donation" : event.eventType}</p>
                     <CardTitle className="text-3xl text-carecircle-primary">{event.title}</CardTitle>
@@ -74,7 +74,7 @@ const EventDetails = async ({ params }: DetailsProps) => {
                     <div className="space-y-2 text-sm">
                         <p><strong>Date:</strong> <time dateTime={event.eventDate}>{formattedDate}</time></p>
                         <p><strong>Location:</strong> {event.location}</p>
-                        <p><strong>Created By:</strong> {user.name}</p>
+                        <p><strong>Created By:</strong> {user?.name || "Community organizer"}</p>
                     </div>
                     <p className="whitespace-pre-wrap wrap-break-word leading-relaxed">{event.description}</p>
                     <div className="self-center flex items-center justify-center">
