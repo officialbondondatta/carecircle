@@ -11,7 +11,6 @@ export async function proxy(request: NextRequest) {
     if (!user) {
         return NextResponse.redirect(new URL('/signin', request.url))
     }
-
 }
 
 

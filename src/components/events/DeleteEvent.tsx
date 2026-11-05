@@ -10,6 +10,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
 import { IEvent } from "@/lib/types";
 import { Trash } from "lucide-react";
@@ -20,8 +21,12 @@ const DeleteEvent = ({ event }: { event: IEvent }) => {
     const router = useRouter()
     const handleDeleteEvent = async () => {
         try {
+            const token = await getTokenFromClient()
             const res = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/delete-event/${event?._id}`, {
-                method: "DELETE"
+                method: "DELETE",
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
             })
             const result = await res.json()
             if (result.deletedCount > 0) {

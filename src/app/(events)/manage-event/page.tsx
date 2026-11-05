@@ -5,14 +5,19 @@ import { auth } from "@/lib/auth";
 import { IEvent } from "@/lib/types";
 import { headers } from "next/headers";
 import { Suspense } from "react";
+import { getTokenFromServer } from "@/lib/getTokenFromServer";
 
 const ManageEventContent = async () => {
     const session = await auth.api.getSession({
         headers: await headers()
     })
     const userEmail = session?.user?.email
+    const token = await getTokenFromServer()
     const res = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/manage-events/${userEmail}`, {
-        cache: 'no-store'
+        cache: 'no-store',
+        headers: {
+            authorization: `Bearer ${token}`
+        }
     })
     if (!res.ok) {
         throw new Error("Unable to load events.")

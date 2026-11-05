@@ -4,25 +4,27 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import EventCardSkeleton from "@/components/events/EventCardSkeleton";
+import { getTokenFromServer } from "@/lib/getTokenFromServer";
 
 const JoinedEventList = async () => {
-    const retriveToken = await auth.api.getToken({
-        headers: await headers()
-    })
-    const token = retriveToken?.token
-
+    const requestHeaders = await headers()
     const session = await auth.api.getSession({
-        headers: await headers()
+        headers: requestHeaders
     })
     const user = session?.user
     if (!user) redirect("/signin")
-    const res = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/join-event/${(user.email)}`, {
+    const token = await getTokenFromServer()
+
+    const res = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/join-event/${encodeURIComponent(user.email)}`, {
         cache: "no-store",
         headers: {
             authorization: `Bearer ${token}`
         }
     })
-    if (!res.ok) throw new Error("Unable to load joined events.")
+    if (!res.ok) {
+        throw new Error(`Unable to load joined events (HTTP ${res.status}). Check the backend authentication configuration.`)
+    }
+
     const joinedEvents: IJoinedEventsShowCaseProps[] = await res.json()
     return <JoinedEvents events={joinedEvents} />
 };

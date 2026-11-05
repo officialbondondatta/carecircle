@@ -3,7 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { auth } from "@/lib/auth";
 import { authClient, useSession } from "@/lib/auth-client";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 import { eventTypes, getToday } from "@/lib/utils";
 import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -38,15 +40,7 @@ const CreateEventForm = () => {
 
 
             try {
-                const { data, error } = await authClient.token()
-                if (error) {
-                    console.dir(error)
-                    toast.error(
-                        error instanceof Error ?
-                            error?.message : "Something went wrong"
-                    )
-                }
-                const token = data?.token
+                const token = await getTokenFromClient()
                 const res = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/create-event`, {
                     method: "POST",
                     headers: {

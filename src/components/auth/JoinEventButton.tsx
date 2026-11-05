@@ -4,6 +4,7 @@ import { Button } from '../ui/button';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { IEvent } from '@/lib/types';
+import { getTokenFromClient } from '@/lib/getTokenFromClient';
 
 export interface IJoinedEventsProps {
     joinedUserEmail: string,
@@ -30,10 +31,12 @@ const JoinEventButton = ({ event }: IJoinEventButtonProps) => {
             joinedUserEmail,
             event
         }
+        const token = await getTokenFromClient()
         const res = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/join-event`, {
             method: "POST",
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                authorization: `Bearer ${token}`
             },
             body: JSON.stringify(joinInfo)
         })

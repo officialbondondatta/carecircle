@@ -6,6 +6,7 @@ import { Field, FieldGroup } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 import type { IEvent } from "@/lib/types"
 import { eventTypes, getToday } from "@/lib/utils"
 import { Edit } from "lucide-react"
@@ -32,10 +33,12 @@ const EditEvent = ({ event }: { event: IEvent }) => {
         }
         const updatedData = Object.fromEntries(formData.entries())
         try {
+            const token = await getTokenFromClient()
             const res = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/edit-event/${event._id}`, {
                 method: 'PATCH',
                 headers: {
-                    'Content-Type': "application/json"
+                    'Content-Type': "application/json",
+                    authorization: `Bearer ${token}`
                 },
                 body: JSON.stringify(updatedData)
             })

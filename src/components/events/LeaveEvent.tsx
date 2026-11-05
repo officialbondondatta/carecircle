@@ -4,15 +4,19 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 import { Button } from "../ui/button";
 import { SquareArrowRightExit } from "lucide-react";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
+import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
 const LeaveEvent = ({ event }: { event: IEvent }) => {
     const router = useRouter()
     const handleLeaveEvent = async () => {
-
+        const token = await getTokenFromClient()
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/join-event/${event._id}`, {
-                method: "DELETE"
+                method: "DELETE",
+                headers: {
+                    authorization: `Bearer ${token}`
+                }
             })
             const result = await res.json()
             if (result.deletedCount > 0) {

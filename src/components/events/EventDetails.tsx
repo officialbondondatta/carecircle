@@ -1,6 +1,4 @@
-import { IEvent } from "@/lib/types";
 import Image from "next/image";
-import { notFound } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import Link from "next/link";
 import { DetailsProps } from "@/app/(events)/view-details/[id]/page";
@@ -9,36 +7,55 @@ import { Suspense } from "react";
 import { Button } from "../ui/button";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { getTokenFromServer } from "@/lib/getTokenFromServer";
 
 const EventDetails = async ({ params }: DetailsProps) => {
+    //event-id
     const { id } = await params;
+
+    //user-session
     const session = await auth.api.getSession({
         headers: await headers()
     })
     const currentUser = session?.user
-    const response = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/all-events`);
-    if (!response.ok) throw new Error("Unable to load event details.");
-    const events: IEvent[] = await response.json();
-    const event = events.find((item) => item._id === id);
-    if (!event) notFound();
+
+
+
+    //single-event
+    const response = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/all-events/${id}`);
+    const event = await response.json()
+
+    //date-format
     const date = new Date(event.eventDate);
     const formattedDate = Number.isNaN(date.getTime()) ? event.eventDate : new Intl.DateTimeFormat("en-GB", {
         day: "numeric", month: "long", year: "numeric", timeZone: "Asia/Dhaka",
     }).format(date);
 
-    const userRes = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/user/${event?.userEmail}`)
+
+    //getting user details
+    const userRes = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/user/${event?.userEmail}`, {
+        cache: 'no-store'
+    })
     const user = await userRes.json()
 
     let isJoined = false
 
-    const allJoinedEventsRes = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/join-event/${currentUser?.email}`)
+    if (currentUser) {
+        //token
+        const token = await getTokenFromServer()
+        const allJoinedEventsRes = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/join-event/${currentUser?.email}`, {
+            headers: {
+                authorization: `Bearer ${token}`
+            }
+        })
 
-    const joinedEvents = await allJoinedEventsRes.json()
+        const joinedEvents = await allJoinedEventsRes.json()
 
-    const checkJoining = joinedEvents.some((joined: IJoinedEventsProps) => joined.event._id.toString() === event._id.toString())
+        const checkJoining = joinedEvents.some((joined: IJoinedEventsProps) => joined.event._id.toString() === event._id.toString())
 
-    if (checkJoining) {
-        isJoined = true
+        if (checkJoining) {
+            isJoined = true
+        }
     }
 
     return (
