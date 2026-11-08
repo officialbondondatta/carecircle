@@ -8,9 +8,13 @@ import { useRouter } from "next/navigation";
 import { getTokenFromClient } from "@/lib/getTokenFromClient";
 
 import { useState } from "react";
+import { useSession } from "@/lib/auth-client";
 
 const LeaveEvent = ({ event }: { event: IEvent }) => {
     const router = useRouter()
+    const { data: session } = useSession()
+    const activeUser = session?.user
+    const email = activeUser?.email
     const [pending, setPending] = useState(false)
     const [open, setOpen] = useState(false)
     const handleLeaveEvent = async () => {
@@ -18,7 +22,7 @@ const LeaveEvent = ({ event }: { event: IEvent }) => {
         setPending(true)
         try {
             const token = await getTokenFromClient()
-            const res = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/join-event/${event._id}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/join-event/${event._id}/${email}`, {
                 method: "DELETE",
                 headers: {
                     authorization: `Bearer ${token}`
