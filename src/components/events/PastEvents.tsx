@@ -13,6 +13,7 @@ export default async function PastEvents({ preview = false }: { preview?: boolea
     const response = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/all-events`, { cache: "no-store" });
     if (!response.ok) throw new Error("Unable to load past events.");
     const allEvents: IEvent[] = await response.json();
+    if (!Array.isArray(allEvents)) throw new Error("Invalid events response.");
     const pastEvents = filterEventsByPeriod(allEvents, "past", getToday());
     const events = preview ? pastEvents.slice(0, 6) : pastEvents;
 

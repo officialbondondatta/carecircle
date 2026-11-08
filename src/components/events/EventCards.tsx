@@ -8,7 +8,9 @@ import { getToday, sortEventsByDate } from "@/lib/utils";
 
 const EventCards = async () => {
     const res = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/all-events`)
+    if (!res.ok) throw new Error("Unable to load upcoming events.")
     const allevents: IEvent[] = await res.json()
+    if (!Array.isArray(allevents)) throw new Error("Invalid events response.")
     const startOfToday = new Date(`${getToday()}T00:00:00+06:00`).getTime()
     const upcomingEvents = allevents.filter((event) =>
         new Date(event.eventDate).getTime() >= startOfToday

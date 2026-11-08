@@ -26,6 +26,7 @@ const JoinedEventList = async () => {
     }
 
     const joinedEvents: IJoinedEventsShowCaseProps[] = await res.json()
+    if (!Array.isArray(joinedEvents)) throw new Error("Invalid events response.");
     return <JoinedEvents events={joinedEvents} />
 };
 

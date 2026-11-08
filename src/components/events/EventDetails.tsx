@@ -1,3 +1,6 @@
+import { notFound } from "next/navigation";
+import { isEventId, readOptionalResource } from "@/lib/api-response";
+import type { IEvent, IUserProps } from "@/lib/types";
 import EventImage from "./EventImage";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import Link from "next/link";
@@ -15,6 +18,14 @@ const EventDetails = async ({ params }: DetailsProps) => {
     //event-id
     const { id } = await params;
 
+    if (!isEventId(id)) notFound()
+    const response = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/all-events/${id}`, { cache: "no-store" });
+    const event = await readOptionalResource<IEvent>(response)
+    if (!event) notFound()
+    if (!event._id || typeof event.eventDate !== "string" || typeof event.userEmail !== "string") {
+        throw new Error("Invalid event response.")
+    }
+
     //user-session
     const session = await auth.api.getSession({
         headers: await headers()
@@ -24,8 +35,6 @@ const EventDetails = async ({ params }: DetailsProps) => {
 
 
     //single-event
-    const response = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/all-events/${id}`);
-    const event = await response.json()
     const ended = isPastEvent(event.eventDate, getToday())
 
     //date-format
@@ -36,25 +45,28 @@ const EventDetails = async ({ params }: DetailsProps) => {
 
 
     //getting user details
-    const userRes = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/user/${event?.userEmail}`, {
+    const userRes = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/user/${encodeURIComponent(event.userEmail)}`, {
         cache: 'no-store'
     })
-    const user = await userRes.json()
+    const user = await readOptionalResource<IUserProps>(userRes)
 
     let isJoined = false
 
     if (currentUser && !ended) {
         //token
         const token = await getTokenFromServer()
-        const allJoinedEventsRes = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/join-event/${currentUser?.email}`, {
+        const allJoinedEventsRes = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/join-event/${encodeURIComponent(currentUser.email)}`, {
+            cache: "no-store",
             headers: {
                 authorization: `Bearer ${token}`
             }
         })
 
+        if (!allJoinedEventsRes.ok) throw new Error("Unable to load event membership.")
         const joinedEvents = await allJoinedEventsRes.json()
+        if (!Array.isArray(joinedEvents)) throw new Error("Invalid event membership response.")
 
-        const checkJoining = joinedEvents.some((joined: IJoinedEventsProps) => joined.event._id.toString() === event._id.toString())
+        const checkJoining = joinedEvents.some((joined: IJoinedEventsProps) => joined.event?._id?.toString() === event._id.toString())
 
         if (checkJoining) {
             isJoined = true

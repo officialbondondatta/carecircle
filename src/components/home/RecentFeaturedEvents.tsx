@@ -14,6 +14,7 @@ const RecentFeaturedEvents = async () => {
     })
     if (!result.ok) throw new Error("Unable to load upcoming events.")
     const allEvents: IEvent[] = await result.json()
+    if (!Array.isArray(allEvents)) throw new Error("Invalid events response.");
     const events = filterEventsByPeriod(allEvents, "upcoming", getToday()).slice(0, 6)
     return (
         <section className="mx-auto max-w-7xl px-6 py-14 lg:py-20" aria-labelledby="recent-events-heading">

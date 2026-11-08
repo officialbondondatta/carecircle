@@ -1,3 +1,4 @@
+import { readOptionalResource } from "@/lib/api-response";
 import type { IEvent, IUserProps } from "@/lib/types";
 import EventImage from "./EventImage";
 import Link from "next/link";
@@ -19,8 +20,7 @@ interface IEventCardProps {
 const EventCard = async ({ event, showButtons, showJoinedEventsButtons, ended }: IEventCardProps) => {
     const { title, description, eventDate, eventType, image, location, userEmail } = event;
     const res = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/user/${encodeURIComponent(userEmail)}`)
-    if (!res.ok) throw new Error(`Unable to load event organizer (${res.status}).`)
-    const user: IUserProps | null = await res.json()
+    const user = await readOptionalResource<IUserProps>(res)
     const session = showButtons || showJoinedEventsButtons ? await auth.api.getSession({
         headers: await headers()
     }) : null

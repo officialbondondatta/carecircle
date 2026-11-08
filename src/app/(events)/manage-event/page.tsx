@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import EventCard from "@/components/events/EventCard";
 import EventCardSkeleton from "@/components/events/EventCardSkeleton";
 import EmptyEvents from "@/components/events/EmptyEvents";
@@ -13,8 +14,9 @@ const ManageEventContent = async () => {
         headers: await headers()
     })
     const userEmail = session?.user?.email
+    if (!userEmail) redirect("/signin")
     const token = await getTokenFromServer()
-    const res = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/manage-events/${userEmail}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_CIRCLESERVER}/manage-events/${encodeURIComponent(userEmail)}`, {
         cache: 'no-store',
         headers: {
             authorization: `Bearer ${token}`
@@ -24,6 +26,7 @@ const ManageEventContent = async () => {
         throw new Error("Unable to load events.")
     }
     const events: IEvent[] = await res.json()
+    if (!Array.isArray(events)) throw new Error("Invalid events response.");
     const sortedEvents = sortEventsByDate(events)
 
     if (events.length === 0) {
